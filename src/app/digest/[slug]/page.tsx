@@ -3,7 +3,12 @@ import path from 'path'
 import matter from 'gray-matter'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeSlug from 'rehype-slug'
+import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypeHighlight from 'rehype-highlight'
 import Link from 'next/link'
+import Mermaid from '@/components/Mermaid'
+import type { Components } from 'react-markdown'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -15,6 +20,23 @@ function getMdFilePath(slug: string): string | null {
     return filePath
   }
   return null
+}
+
+const components: Components = {
+  code({ className, children, ...props }) {
+    const match = /language-(\w+)/.exec(className || '')
+    const code = String(children).trim()
+
+    if (match && match[1] === 'mermaid') {
+      return <Mermaid chart={code} />
+    }
+
+    return (
+      <code className={className} {...props}>
+        {children}
+      </code>
+    )
+  },
 }
 
 export default async function DigestPage({ params }: PageProps) {
@@ -50,7 +72,15 @@ export default async function DigestPage({ params }: PageProps) {
           )}
         </header>
         <div className="prose prose-blue max-w-none">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[
+              rehypeSlug,
+              rehypeAutolinkHeadings,
+              rehypeHighlight,
+            ]}
+            components={components}
+          >
             {content}
           </ReactMarkdown>
         </div>
