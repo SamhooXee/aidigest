@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 import rehypeHighlight from 'rehype-highlight'
+import rehypeRaw from 'rehype-raw'
 import Link from 'next/link'
 import Mermaid from '@/components/Mermaid'
 import type { Components } from 'react-markdown'
@@ -23,7 +24,19 @@ function getMdFilePath(slug: string): string | null {
 }
 
 const components: Components = {
-  code({ className, children, ...props }) {
+  pre({ node, children, ...props }: any) {
+    const isMermaid = 
+      node?.children?.[0]?.type === 'element' &&
+      node.children[0].tagName === 'code' &&
+      node.children[0].properties?.className?.includes('language-mermaid')
+
+    if (isMermaid) {
+      return <div className="not-prose">{children}</div>
+    }
+
+    return <pre {...props}>{children}</pre>
+  },
+  code({ className, children, node, ...props }: any) {
     const match = /language-(\w+)/.exec(className || '')
     const code = String(children).trim()
 
@@ -75,6 +88,7 @@ export default async function DigestPage({ params }: PageProps) {
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[
+              rehypeRaw,
               rehypeSlug,
               rehypeAutolinkHeadings,
               rehypeHighlight,

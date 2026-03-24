@@ -26,6 +26,19 @@ mermaid.initialize({
     textColor: '#1f2937',
     mainBkgComponent: '#f3f4f6',
     highlight: '#3b82f6',
+    // 增加更多彩色的饼图配置
+    pie1: '#3b82f6', // blue-500
+    pie2: '#10b981', // emerald-500
+    pie3: '#f59e0b', // amber-500
+    pie4: '#ef4444', // red-500
+    pie5: '#8b5cf6', // violet-500
+    pie6: '#06b6d4', // cyan-500
+    pie7: '#f97316', // orange-500
+    pie8: '#ec4899', // pink-500
+    pie9: '#84cc16', // lime-500
+    pie10: '#6366f1', // indigo-500
+    pie11: '#14b8a6', // teal-500
+    pie12: '#f43f5e', // rose-500
   },
 })
 
@@ -47,18 +60,7 @@ export default function Mermaid({ chart }: MermaidProps) {
           if (svgEl) {
             svgEl.style.backgroundColor = '#ffffff'
             svgEl.style.fill = 'none'
-            // 遍历所有元素，修改内联 style 中的 fill 和 stroke
-            svgEl.querySelectorAll('*').forEach(el => {
-              const style = el.getAttribute('style')
-              if (style) {
-                let newStyle = style
-                  .replace(/fill:\s*rgb\(\d+,\s*\d+,\s*\d+\)/g, 'fill: #e5e7eb')
-                  .replace(/stroke:\s*rgb\(\d+,\s*\d+,\s*\d+\)/g, 'stroke: #d1d5db')
-                if (newStyle !== style) {
-                  el.setAttribute('style', newStyle)
-                }
-              }
-            })
+            // Removed manual style replacements to preserve pie chart and other diagrams' original colors
           }
         }
       }).catch((err) => {
