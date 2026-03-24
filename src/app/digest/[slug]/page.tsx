@@ -72,19 +72,19 @@ export default async function DigestPage({ params }: PageProps) {
 
   return (
     <div>
-      <Link href="/" className="text-blue-600 hover:underline mb-6 inline-block">
+      <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-block">
         ← 返回首页
       </Link>
-      <article className="bg-white rounded-lg shadow-sm border p-8 mt-4">
-        <header className="mb-8 pb-6 border-b">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+      <article className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-8 mt-4">
+        <header className="mb-8 pb-6 border-b dark:border-gray-700">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             {data.title || slug.replace(/-/g, ' ')}
           </h1>
           {data.date && (
-            <time className="text-gray-500">{data.date}</time>
+            <time className="text-gray-500 dark:text-gray-400">{data.date}</time>
           )}
         </header>
-        <div className="prose prose-blue max-w-none">
+        <div className="prose prose-blue max-w-none dark:prose-invert">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[

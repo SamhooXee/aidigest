@@ -12,10 +12,17 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true);
     const savedMode = localStorage.getItem('themeMode') as 'light' | 'dark' | null;
+    let initialMode: 'light' | 'dark' = 'light';
     if (savedMode) {
-      setMode(savedMode);
+      initialMode = savedMode;
     } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setMode('dark');
+      initialMode = 'dark';
+    }
+    setMode(initialMode);
+    if (initialMode === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
@@ -25,6 +32,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
         setMode((prevMode) => {
           const newMode = prevMode === 'light' ? 'dark' : 'light';
           localStorage.setItem('themeMode', newMode);
+          if (newMode === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
           return newMode;
         });
       },
