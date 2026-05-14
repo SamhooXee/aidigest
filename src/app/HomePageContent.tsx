@@ -7,19 +7,23 @@ import {
   CardContent,
   CardActionArea,
   Box,
-  Stack
+  Stack,
+  Chip
 } from '@mui/material';
 import ArticleIcon from '@mui/icons-material/Article';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
+type FileData = {
+  filename: string;
+  date: string;
+  slug: string;
+  title: string;
+  highlights: string;
+};
+
 type HomePageContentProps = {
-  files: {
-    filename: string;
-    date: string;
-    slug: string;
-    title: string;
-  }[];
+  files: FileData[];
 };
 
 export default function HomePageContent({ files }: HomePageContentProps) {
@@ -38,52 +42,58 @@ export default function HomePageContent({ files }: HomePageContentProps) {
 
   return (
     <Box sx={{ mb: 4 }}>
-      <Typography 
-        variant="h4" 
-        component="h1" 
-        fontWeight="bold" 
+      <Typography
+        variant="h4"
+        component="h1"
+        fontWeight="bold"
         sx={{ mb: 4, color: 'text.primary', display: 'flex', alignItems: 'center', gap: 1.5 }}
       >
         <ArticleIcon fontSize="large" color="primary" />
-        最新摘要
+        今日看点
       </Typography>
 
       <Stack spacing={3}>
-        {files.map(({ filename, date, slug, title }) => (
-          <Card
-            key={filename}
-            elevation={0}
-            sx={{
-              transition: 'all 0.2s ease-in-out',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: (theme) => theme.palette.mode === 'light' 
-                  ? '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)' 
-                  : '0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5)',
-                borderColor: 'primary.main',
-              },
-            }}
-          >
-            <CardActionArea component={NextLink} href={`/digest/${slug}`} sx={{ p: 3 }}>
-              <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'text.secondary' }}>
-                      <CalendarTodayIcon sx={{ fontSize: 16, mr: 1 }} />
-                      <Typography variant="body2" fontWeight="medium">
-                        {date}
-                      </Typography>
-                    </Box>
-                    <Typography variant="h6" component="h2" fontWeight="600" color="text.primary">
-                      {title}
-                    </Typography>
+        {files.map(({ date, slug, highlights }) => {
+          const displayText = highlights.length > 200
+            ? highlights.slice(0, 200) + '...'
+            : highlights;
+
+          return (
+            <Card
+              key={slug}
+              elevation={0}
+              variant="outlined"
+              sx={{
+                transition: 'all 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: (theme) => theme.palette.mode === 'light'
+                    ? '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                    : '0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5)',
+                  borderColor: 'primary.main',
+                },
+              }}
+            >
+              <CardActionArea component={NextLink} href={`/digest/${slug}`} sx={{ p: 3 }}>
+                <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
+                  <Typography variant="body1" color="text.primary" sx={{ mb: 2, lineHeight: 1.7 }}>
+                    {displayText}
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Chip
+                      icon={<CalendarTodayIcon sx={{ fontSize: 16 }} />}
+                      label={date}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                    />
+                    <ArrowForwardIosIcon color="disabled" sx={{ fontSize: 16 }} />
                   </Box>
-                  <ArrowForwardIosIcon color="disabled" sx={{ fontSize: 20 }} />
-                </Box>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        ))}
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          );
+        })}
       </Stack>
     </Box>
   );
