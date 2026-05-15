@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import type { Metadata, ResolvingMetadata } from 'next'
+import type { Metadata } from 'next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeSlug from 'rehype-slug'
@@ -19,7 +19,6 @@ interface PageProps {
 
 export async function generateMetadata(
   { params }: PageProps,
-  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { slug } = await params
   const filePath = path.join(process.cwd(), 'content', `${slug}.md`)
@@ -31,8 +30,7 @@ export async function generateMetadata(
   }
 
   const meta = extractMetadata(filePath, slug)
-  const parentData = await parent
-  const url = `/digest/${slug}`
+  const siteUrl = process.env.SITE_URL || 'https://aidigest.vercel.app'
 
   return {
     title: meta.title,
@@ -43,7 +41,7 @@ export async function generateMetadata(
       type: 'article',
       publishedTime: meta.date,
       tags: meta.tags,
-      url,
+      url: `${siteUrl}/digest/${slug}`,
     },
     twitter: {
       title: meta.title,
