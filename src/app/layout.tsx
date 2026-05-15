@@ -4,8 +4,28 @@ import { Providers } from './Providers'
 import Header from './Header'
 
 export const metadata: Metadata = {
-  title: 'AI Digest',
-  description: 'AI 新闻摘要',
+  title: {
+    default: 'AI Digest — AI 博客每日精选',
+    template: '%s | AI Digest',
+  },
+  description: '来自 Karpathy 推荐的 90+ 个顶级技术博客，AI 每日精选 Top 15 篇，涵盖安全、AI/ML、编程、基础设施等领域',
+  metadataBase: new URL(process.env.SITE_URL || 'https://aidigest.vercel.app'),
+  openGraph: {
+    title: 'AI Digest — AI 博客每日精选',
+    description: '来自 Karpathy 推荐的 90+ 个顶级技术博客，AI 每日精选 Top 15 篇',
+    siteName: 'AI Digest',
+    locale: 'zh_CN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI Digest — AI 博客每日精选',
+    description: '来自 Karpathy 推荐的 90+ 个顶级技术博客，AI 每日精选 Top 15 篇',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function RootLayout({
