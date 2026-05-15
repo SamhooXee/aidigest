@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import type { Metadata, ResolvingMetadata } from 'next'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeSlug from 'rehype-slug'
@@ -10,9 +11,45 @@ import rehypeRaw from 'rehype-raw'
 import Link from 'next/link'
 import Mermaid from '@/components/Mermaid'
 import type { Components } from 'react-markdown'
+import { extractMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { slug } = await params
+  const filePath = path.join(process.cwd(), 'content', `${slug}.md`)
+
+  if (!fs.existsSync(filePath)) {
+    return {
+      title: '文章未找到',
+    }
+  }
+
+  const meta = extractMetadata(filePath, slug)
+  const parentData = await parent
+  const url = `/digest/${slug}`
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      type: 'article',
+      publishedTime: meta.date,
+      tags: meta.tags,
+      url,
+    },
+    twitter: {
+      title: meta.title,
+      description: meta.description,
+    },
+  }
 }
 
 function getMdFilePath(slug: string): string | null {
@@ -25,7 +62,7 @@ function getMdFilePath(slug: string): string | null {
 
 const components: Components = {
   pre({ node, children, ...props }: any) {
-    const isMermaid = 
+    const isMermaid =
       node?.children?.[0]?.type === 'element' &&
       node.children[0].tagName === 'code' &&
       node.children[0].properties?.className?.includes('language-mermaid')
