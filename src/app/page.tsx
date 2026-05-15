@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
+import type { Metadata } from 'next'
 import HomePageContent from './HomePageContent'
+import { extractMetadata, getDigestSlugs } from '@/lib/seo'
 
 function getMdFiles() {
   const contentDir = path.join(process.cwd(), 'content')
@@ -32,6 +34,25 @@ function extractTodayHighlights(filePath: string): string {
     return rest.slice(0, separatorIndex).trim()
   } catch {
     return ''
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const slugs = getDigestSlugs()
+  if (slugs.length === 0) {
+    return {
+      title: 'AI 博客每日精选',
+      description: '来自 Karpathy 推荐的 90+ 个顶级技术博客，AI 每日精选 Top 15 篇',
+    }
+  }
+
+  const latestSlug = slugs[0]
+  const filePath = path.join(process.cwd(), 'content', `${latestSlug}.md`)
+  const meta = extractMetadata(filePath, latestSlug)
+
+  return {
+    title: meta.title,
+    description: meta.description,
   }
 }
 
