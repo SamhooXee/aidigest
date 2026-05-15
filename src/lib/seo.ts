@@ -9,7 +9,7 @@ const HEADING_H1_RE = /^#\s+(.+)$/m
 const EMOJI_NEWSLETTER = '📰'
 const HIGHLIGHTS_SECTION_RE = /##\s*.*?今日看点\s*\n([\s\S]*?)\n---/
 const TAGS_LINE_RE = /🏷️\s*(.+)/
-const DATE_RE = /(\d{4}-\d{2}-\d{2})/
+const DATE_RE = /digest_(\d{4}-\d{2}-\d{2})/
 const MD_EXTENSION_RE = /\.md$/
 const FALLBACK_DESCRIPTION = 'AI 博客每日精选，来自 Karpathy 推荐的顶级技术博客'
 
@@ -72,7 +72,8 @@ export function getDigestSlugs(): string[] {
       .filter(f => f.endsWith('.md'))
       .map(f => f.replace(MD_EXTENSION_RE, ''))
       .sort((a, b) => b.localeCompare(a))
-  } catch {
+  } catch (error) {
+    console.warn('Could not read content directory:', error)
     return []
   }
 }
